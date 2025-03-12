@@ -21,12 +21,19 @@ class MapMatrixProvider {
         const val MAP_WIDTH = 40
         const val MAP_HEIGHT = 40
 
-        // Constantes para los mapas
+        // Constantes para los mapas existentes
         const val MAP_MAIN = "escom_main"
         const val MAP_BUILDING2 = "escom_building2"
         const val MAP_SALON2009 = "escom_salon2009"
         const val MAP_SALON2010 = "escom_salon2010"
         const val MAP_CAFETERIA = "escom_cafeteria"
+
+        // Constantes para los nuevos mapas (secuencia lineal)
+        const val MAP_ESTACIONAMIENTO = "EstacionamientoEscom"
+        const val MAP_TRAS_PLAZA = "TramoAtrasPlaza"
+        const val MAP_LINDAVISTA = "TramoLindavista"
+        const val MAP_TURISMO = "TramoTurismo"
+        const val MAP_FUENTE = "TramoFuente"
 
         fun normalizeMapName(mapName: String?): String {
             if (mapName.isNullOrBlank()) return MAP_MAIN
@@ -34,40 +41,62 @@ class MapMatrixProvider {
             val lowerMap = mapName.lowercase()
 
             return when {
-                // Mapa principal
+                // Mapas existentes
                 lowerMap == "main" -> MAP_MAIN
                 lowerMap == "map_main" -> MAP_MAIN
                 lowerMap.contains("main") && !lowerMap.contains("building") -> MAP_MAIN
 
-                // Edificio 2
                 lowerMap.contains("building2") || lowerMap.contains("edificio2") -> MAP_BUILDING2
 
-                // Salones
                 lowerMap.contains("2009") || lowerMap.contains("salon2009") -> MAP_SALON2009
                 lowerMap.contains("2010") || lowerMap.contains("salon2010") -> MAP_SALON2010
 
-                // Cafetería
                 lowerMap.contains("cafe") || lowerMap.contains("cafeteria") -> MAP_CAFETERIA
+
+                // Nuevos mapas
+                lowerMap.contains("estacionamiento") -> MAP_ESTACIONAMIENTO
+                lowerMap.contains("plaza") || lowerMap.contains("atras") -> MAP_TRAS_PLAZA
+                lowerMap.contains("linda") -> MAP_LINDAVISTA
+                lowerMap.contains("turismo") -> MAP_TURISMO
+                lowerMap.contains("fuente") -> MAP_FUENTE
 
                 // Si no coincide con ninguno de los anteriores, devolver el original
                 else -> mapName
             }
         }
 
-        // Puntos de transición entre mapas
+        // Puntos de transición entre mapas existentes
         val MAIN_TO_BUILDING2_POSITION = Pair(15, 10)
-        val BUILDING2_TO_MAIN_POSITION = Pair(5, 5)  // Posición segura en la esquina superior izquierda
-        val BUILDING2_TO_SALON2009_POSITION = Pair(15, 16)  // Punto en el pasillo principal
-        val SALON2009_TO_BUILDING2_POSITION = Pair(1, 20)  // Punto en la puerta del salón
+        val BUILDING2_TO_MAIN_POSITION = Pair(5, 5)
+        val BUILDING2_TO_SALON2009_POSITION = Pair(15, 16)
+        val SALON2009_TO_BUILDING2_POSITION = Pair(1, 20)
+        val BUILDING2_TO_SALON2010_POSITION = Pair(20, 20)
+        val MAIN_TO_SALON2010_POSITION = Pair(25, 25)
+        val SALON2010_TO_BUILDING2_POSITION = Pair(5, 5)
+        val SALON2010_TO_MAIN_POSITION = Pair(1, 1)
+        val MAIN_TO_CAFETERIA_POSITION = Pair(2, 2)
+        val CAFETERIA_TO_MAIN_POSITION = Pair(1, 1)
 
-        val BUILDING2_TO_SALON2010_POSITION = Pair(20, 20)  // Desde edificio 2
-        val MAIN_TO_SALON2010_POSITION = Pair(25, 25)       // Desde mapa principal
-        val SALON2010_TO_BUILDING2_POSITION = Pair(5, 5)    // Vuelta al edificio 2
-        val SALON2010_TO_MAIN_POSITION = Pair(1, 1)         // Vuelta al mapa principal
+        // Puntos de transición para los nuevos mapas
+        // Del mapa principal al primer mapa (Estacionamiento)
+        val MAIN_TO_ESTACIONAMIENTO_POSITION = Pair(25, 5)
+        val ESTACIONAMIENTO_TO_MAIN_POSITION = Pair(20, 38)
 
-        val MAIN_TO_CAFETERIA_POSITION = Pair(2, 2)       // Desde mapa principal
-        val CAFETERIA_TO_MAIN_POSITION = Pair(1, 1)         // Vuelta al mapa principal
+        // Del Estacionamiento al segundo mapa (Tramo Atrás Plaza)
+        val ESTACIONAMIENTO_TO_PLAZA_POSITION = Pair(35, 20)
+        val PLAZA_TO_ESTACIONAMIENTO_POSITION = Pair(5, 20)
 
+        // Del Tramo Atrás Plaza al tercer mapa (Tramo Lindavista)
+        val PLAZA_TO_LINDAVISTA_POSITION = Pair(35, 20)
+        val LINDAVISTA_TO_PLAZA_POSITION = Pair(5, 20)
+
+        // Del Tramo Lindavista al cuarto mapa (Tramo Turismo)
+        val LINDAVISTA_TO_TURISMO_POSITION = Pair(35, 20)
+        val TURISMO_TO_LINDAVISTA_POSITION = Pair(5, 20)
+
+        // Del Tramo Turismo al quinto mapa (Tramo Fuente)
+        val TURISMO_TO_FUENTE_POSITION = Pair(35, 20)
+        val FUENTE_TO_TURISMO_POSITION = Pair(5, 20)
 
         /**
          * Obtiene la matriz para el mapa especificado
@@ -76,15 +105,22 @@ class MapMatrixProvider {
             return when (mapId) {
                 MAP_MAIN -> createMainMapMatrix()
                 MAP_BUILDING2 -> createBuilding2Matrix()
-                MAP_SALON2009 -> createSalon2009Matrix()  // Nueva matriz para el salón 2009
-                MAP_SALON2010 -> createSalon2010Matrix()  // Nueva matriz para el salón 2010
+                MAP_SALON2009 -> createSalon2009Matrix()
+                MAP_SALON2010 -> createSalon2010Matrix()
                 MAP_CAFETERIA -> createCafeESCOMMatrix()
-                else -> createDefaultMatrix() // Por defecto, un mapa básico
+                // Nuevos mapas
+                MAP_ESTACIONAMIENTO -> createEstacionamientoMatrix()
+                MAP_TRAS_PLAZA -> createPlazaMatrix()
+                MAP_LINDAVISTA -> createLindavistaMatrix()
+                MAP_TURISMO -> createTurismoMatrix()
+                MAP_FUENTE -> createFuenteMatrix()
+                else -> createDefaultMatrix() // Mapa por defecto
             }
         }
 
         /**
          * Matriz para el mapa principal del campus
+         * Modificada para incluir la entrada al Estacionamiento
          */
         private fun createMainMapMatrix(): Array<Array<Int>> {
             val matrix = Array(MAP_HEIGHT) { Array(MAP_WIDTH) { PATH } }
@@ -119,25 +155,16 @@ class MapMatrixProvider {
                 }
             }
 
+            // Añadir punto interactivo para el nuevo mapa de Estacionamiento
+            matrix[5][25] = INTERACTIVE // Entrada al Estacionamiento de ESCOM
+
             return matrix
         }
 
         /**
          * Matriz para el edificio 2
-         * Basada exactamente en el mapa ASCII:
-         * +-------------------------------------------------------------------------+
-         * |                               Edificio 2                                |
-         * |                              Planta Baja                                |
-         * |                                                                         |
-         * |  +--------+--------+--------+-----+--------+--------+--------+----+     |
-         * |  |  2001  |  2002  |  2003  | ⬆️  |  2004  |  2005  |  2006  | 🚾 |     |
-         * |  |🏫 Aula |🏫 Aula |🏫 Aula | 🪜  |🏫 Aula |🏫 Aula |🏫 Aula | WC |     |
-         * |  +🚪------+🚪------+🚪------+ ⬇️  +🚪------+🚪------+🚪------+🚪--+     |
-         * |                                                                         |
-         * |                      [    Pasillo Principal 🚶    ]                     |
-         * |                                                                         |
-         * +-------------------------------------------------------------------------+
-         */y
+         * (mantener implementación existente)
+         */
         private fun createBuilding2Matrix(): Array<Array<Int>> {
             // Crear matriz con PATH (caminable) por defecto
             val matrix = Array(MAP_HEIGHT) { Array(MAP_WIDTH) { PATH } }
@@ -288,9 +315,9 @@ class MapMatrixProvider {
             return matrix
         }
 
-
         /**
          * Matriz para el salón 2009
+         * (mantener implementación existente)
          */
         private fun createSalon2009Matrix(): Array<Array<Int>> {
             val matrix = Array(MAP_HEIGHT) { Array(MAP_WIDTH) { WALL } }
@@ -345,6 +372,10 @@ class MapMatrixProvider {
             return matrix
         }
 
+        /**
+         * Matriz para el salón 2010
+         * (mantener implementación existente)
+         */
         private fun createSalon2010Matrix(): Array<Array<Int>> {
             val matrix = Array(MAP_HEIGHT) { Array(MAP_WIDTH) { PATH } }
 
@@ -382,7 +413,8 @@ class MapMatrixProvider {
         }
 
         /**
-         * Matriz para el mapa principal del campus
+         * Matriz para la cafetería
+         * (mantener implementación existente)
          */
         private fun createCafeESCOMMatrix(): Array<Array<Int>> {
             val matrix = Array(MAP_HEIGHT) { Array(MAP_WIDTH) { PATH } }
@@ -469,6 +501,247 @@ class MapMatrixProvider {
         }
 
         /**
+         * NUEVO MAPA: Estacionamiento de ESCOM
+         */
+        private fun createEstacionamientoMatrix(): Array<Array<Int>> {
+            val matrix = Array(MAP_HEIGHT) { Array(MAP_WIDTH) { WALL } } // Todo es muro por defecto
+
+            // Área del estacionamiento (caminable)
+            for (i in 5 until MAP_HEIGHT-5) {
+                for (j in 5 until MAP_WIDTH-5) {
+                    matrix[i][j] = PATH
+                }
+            }
+
+            // Líneas de aparcamiento (obstáculos)
+            for (row in 0..3) {
+                val rowY = 10 + (row * 7)
+
+                // Crear líneas horizontales de autos estacionados
+                for (j in 8 until MAP_WIDTH-8) {
+                    if (j % 5 == 0) { // Espaciado entre autos
+                        matrix[rowY][j] = INACCESSIBLE
+                        matrix[rowY+1][j] = INACCESSIBLE
+                        matrix[rowY+2][j] = INACCESSIBLE
+                    }
+                }
+            }
+
+            // Caseta de vigilancia (obstáculo)
+            for (i in 30..33) {
+                for (j in 15..20) {
+                    matrix[i][j] = INACCESSIBLE
+                }
+            }
+
+            // Punto interactivo para salir al mapa principal
+            matrix[38][20] = INTERACTIVE
+
+            // Punto interactivo para ir al siguiente mapa (TramoAtrasPlaza)
+            matrix[20][35] = INTERACTIVE
+
+            return matrix
+        }
+
+        /**
+         * NUEVO MAPA: Tramo Atrás Plaza
+         */
+        private fun createPlazaMatrix(): Array<Array<Int>> {
+            val matrix = Array(MAP_HEIGHT) { Array(MAP_WIDTH) { WALL } } // Todo es muro por defecto
+
+            // Crear un camino principal que atraviese el mapa
+            for (i in 18..22) { // Camino horizontal en el centro
+                for (j in 0 until MAP_WIDTH) {
+                    matrix[i][j] = PATH
+                }
+            }
+
+            // Crear áreas verdes (obstáculos)
+            for (i in 5..15) {
+                for (j in 5..15) {
+                    matrix[i][j] = INACCESSIBLE // Área verde superior izquierda
+                }
+            }
+
+            for (i in 25..35) {
+                for (j in 25..35) {
+                    matrix[i][j] = INACCESSIBLE // Área verde inferior derecha
+                }
+            }
+
+            // Bancas en el camino (obstáculos pequeños)
+            for (j in 10..30 step 10) {
+                matrix[17][j] = INACCESSIBLE
+                matrix[23][j] = INACCESSIBLE
+            }
+
+            // Punto interactivo para regresar al Estacionamiento
+            matrix[20][5] = INTERACTIVE
+
+            // Punto interactivo para ir al siguiente mapa (TramoLindavista)
+            matrix[20][35] = INTERACTIVE
+
+            // Añadir un easter egg interactivo
+            matrix[10][30] = INTERACTIVE
+
+            return matrix
+        }
+
+        /**
+         * NUEVO MAPA: Tramo Lindavista
+         */
+        private fun createLindavistaMatrix(): Array<Array<Int>> {
+            val matrix = Array(MAP_HEIGHT) { Array(MAP_WIDTH) { PATH } } // Todo es camino por defecto
+
+            // Bordes del mapa
+            for (i in 0 until MAP_HEIGHT) {
+                for (j in 0 until MAP_WIDTH) {
+                    if (i == 0 || i == MAP_HEIGHT-1 || j == 0 || j == MAP_WIDTH-1) {
+                        matrix[i][j] = WALL
+                    }
+                }
+            }
+
+            // Edificios en ambos lados del camino (obstáculos)
+            for (i in 5..15) {
+                for (j in 5..15) {
+                    matrix[i][j] = INACCESSIBLE // Edificio superior izquierdo
+                }
+            }
+
+            for (i in 5..15) {
+                for (j in 25..35) {
+                    matrix[i][j] = INACCESSIBLE // Edificio superior derecho
+                }
+            }
+
+            for (i in 25..35) {
+                for (j in 5..15) {
+                    matrix[i][j] = INACCESSIBLE // Edificio inferior izquierdo
+                }
+            }
+
+            for (i in 25..35) {
+                for (j in 25..35) {
+                    matrix[i][j] = INACCESSIBLE // Edificio inferior derecho
+                }
+            }
+
+            // Crear un puesto de comida (interactivo)
+            matrix[20][10] = INTERACTIVE
+
+            // Punto interactivo para regresar al Tramo Atrás Plaza
+            matrix[20][5] = INTERACTIVE
+
+            // Punto interactivo para ir al siguiente mapa (TramoTurismo)
+            matrix[20][35] = INTERACTIVE
+
+            return matrix
+        }
+
+        /**
+         * NUEVO MAPA: Tramo Turismo
+         */
+        private fun createTurismoMatrix(): Array<Array<Int>> {
+            val matrix = Array(MAP_HEIGHT) { Array(MAP_WIDTH) { WALL } } // Todo es muro por defecto
+
+            // Crear un camino principal en forma de U
+            for (j in 5 until MAP_WIDTH-5) {
+                matrix[5][j] = PATH // Camino horizontal superior
+            }
+
+            for (i in 5..35) {
+                matrix[i][5] = PATH // Camino vertical izquierdo
+                matrix[i][35] = PATH // Camino vertical derecho
+            }
+
+            for (j in 5 until MAP_WIDTH-5) {
+                matrix[35][j] = PATH // Camino horizontal inferior
+            }
+
+            // Crear caminos transversales
+            for (i in 15..25) {
+                for (j in 5..35) {
+                    matrix[i][j] = PATH // Camino ancho en el centro
+                }
+            }
+
+            // Añadir elementos turísticos (interactivos)
+            matrix[10][20] = INTERACTIVE // Monumento
+            matrix[25][15] = INTERACTIVE // Estatua
+            matrix[25][25] = INTERACTIVE // Fuente pequeña
+
+            // Punto interactivo para regresar al Tramo Lindavista
+            matrix[5][20] = INTERACTIVE
+
+            // Punto interactivo para ir al último mapa (TramoFuente)
+            matrix[35][20] = INTERACTIVE
+
+            return matrix
+        }
+
+        /**
+         * NUEVO MAPA: Tramo Fuente
+         */
+        private fun createFuenteMatrix(): Array<Array<Int>> {
+            val matrix = Array(MAP_HEIGHT) { Array(MAP_WIDTH) { PATH } } // Todo es camino por defecto
+
+            // Bordes del mapa
+            for (i in 0 until MAP_HEIGHT) {
+                for (j in 0 until MAP_WIDTH) {
+                    if (i == 0 || i == MAP_HEIGHT-1 || j == 0 || j == MAP_WIDTH-1) {
+                        matrix[i][j] = WALL
+                    }
+                }
+            }
+
+            // Fuente grande en el centro (obstáculo circular)
+            val centerX = MAP_WIDTH / 2
+            val centerY = MAP_HEIGHT / 2
+            val radius = 8
+
+            for (i in 0 until MAP_HEIGHT) {
+                for (j in 0 until MAP_WIDTH) {
+                    val distanceSquared = (i - centerY) * (i - centerY) + (j - centerX) * (j - centerX)
+                    if (distanceSquared < radius * radius) {
+                        matrix[i][j] = INACCESSIBLE // Interior de la fuente
+                    }
+                }
+            }
+
+            // Caminos alrededor de la fuente
+            for (i in centerY-radius-2..centerY+radius+2) {
+                for (j in centerX-radius-2..centerX+radius+2) {
+                    if (i >= 0 && i < MAP_HEIGHT && j >= 0 && j < MAP_WIDTH) {
+                        val distanceSquared = (i - centerY) * (i - centerY) + (j - centerX) * (j - centerX)
+                        if (distanceSquared >= radius * radius && distanceSquared <= (radius+2) * (radius+2)) {
+                            matrix[i][j] = PATH // Camino alrededor de la fuente
+                        }
+                    }
+                }
+            }
+
+            // Bancas en los bordes (obstáculos pequeños)
+            for (angle in 0 until 360 step 45) {
+                val radians = Math.toRadians(angle.toDouble())
+                val benchX = centerX + ((radius + 4) * Math.cos(radians)).toInt()
+                val benchY = centerY + ((radius + 4) * Math.sin(radians)).toInt()
+
+                if (benchX >= 0 && benchX < MAP_WIDTH && benchY >= 0 && benchY < MAP_HEIGHT) {
+                    matrix[benchY][benchX] = INACCESSIBLE
+                }
+            }
+
+            // Punto interactivo para regresar al Tramo Turismo
+            matrix[5][20] = INTERACTIVE
+
+            // Punto interactivo en medio de la fuente (easter egg/minijuego)
+            matrix[centerY][centerX] = INTERACTIVE
+
+            return matrix
+        }
+
+        /**
          * Matriz predeterminada para cualquier otro mapa
          */
         private fun createDefaultMatrix(): Array<Array<Int>> {
@@ -488,13 +761,22 @@ class MapMatrixProvider {
 
         /**
          * Comprueba si la coordenada especificada es un punto de transición entre mapas
+         * Actualizado para incluir los nuevos mapas
          */
         fun isMapTransitionPoint(mapId: String, x: Int, y: Int): String? {
             // Imprimimos para depuración
             Log.d("MapTransition", "Checking transition at $mapId: ($x, $y)")
 
-            // Para el edificio 2, cualquier punto interactivo cerca del centro del pasillo
-            // nos lleva al salón 2009
+            // Transiciones existentes - mapa principal y edificios
+            if (mapId == MAP_MAIN) {
+                // Puntos de transición a edificios existentes
+                if (x == 15 && y == 10) return MAP_BUILDING2
+                if (x == 33 && y == 34) return MAP_CAFETERIA
+
+                // Punto nuevo para transición al Estacionamiento
+                if (x == 25 && y == 5) return MAP_ESTACIONAMIENTO
+            }
+
             if (mapId == MAP_BUILDING2) {
                 // Si estamos en o cerca de las coordenadas (15,16) o cualquiera de las alternativas
                 val nearCenter = (x >= 14 && x <= 16 && y >= 15 && y <= 17)
@@ -516,7 +798,7 @@ class MapMatrixProvider {
                 }
             }
 
-            // Si estamos en el salón 2009, la coordenada (1,20) nos lleva de vuelta al edificio 2
+            // Más transiciones existentes...
             if (mapId == MAP_SALON2009 && x == 1 && y == 20) {
                 return MAP_BUILDING2
             }
@@ -530,25 +812,72 @@ class MapMatrixProvider {
                 }
             }
 
-            if (mapId == MAP_MAIN && x == 33 && y == 34) {
-                return MAP_CAFETERIA
+            // NUEVAS TRANSICIONES ENTRE MAPAS (SECUENCIA LINEAL)
+
+            // Transiciones desde el Estacionamiento
+            if (mapId == MAP_ESTACIONAMIENTO) {
+                // Regresar al mapa principal
+                if (x == 20 && y == 38) return MAP_MAIN
+
+                // Ir al siguiente mapa (Tramo Atrás Plaza)
+                if (x == 35 && y == 20) return MAP_TRAS_PLAZA
             }
-            // Resto de transiciones...
+
+            // Transiciones desde Tramo Atrás Plaza
+            if (mapId == MAP_TRAS_PLAZA) {
+                // Regresar al Estacionamiento
+                if (x == 5 && y == 20) return MAP_ESTACIONAMIENTO
+
+                // Ir al siguiente mapa (Tramo Lindavista)
+                if (x == 35 && y == 20) return MAP_LINDAVISTA
+            }
+
+            // Transiciones desde Tramo Lindavista
+            if (mapId == MAP_LINDAVISTA) {
+                // Regresar al Tramo Atrás Plaza
+                if (x == 5 && y == 20) return MAP_TRAS_PLAZA
+
+                // Ir al siguiente mapa (Tramo Turismo)
+                if (x == 35 && y == 20) return MAP_TURISMO
+            }
+
+            // Transiciones desde Tramo Turismo
+            if (mapId == MAP_TURISMO) {
+                // Regresar al Tramo Lindavista
+                if (x == 5 && y == 20) return MAP_LINDAVISTA
+
+                // Ir al último mapa (Tramo Fuente)
+                if (x == 35 && y == 20) return MAP_FUENTE
+            }
+
+            // Transiciones desde Tramo Fuente
+            if (mapId == MAP_FUENTE) {
+                // Regresar al Tramo Turismo
+                if (x == 5 && y == 20) return MAP_TURISMO
+            }
 
             return null
         }
 
-
         /**
          * Obtiene la posición inicial para un mapa destino
+         * Actualizado para incluir los nuevos mapas
          */
         fun getInitialPositionForMap(mapId: String): Pair<Int, Int> {
             return when (mapId) {
-                MAP_MAIN -> Pair(15, 15)  // Posición central en el mapa principal
-                MAP_BUILDING2 -> Pair(20, 16)  // Centro del pasillo principal del edificio 2
-                MAP_SALON2009 -> Pair(20, 20)  // Posición central dentro del salón 2009
-                MAP_SALON2010 -> Pair(20, 20)  // Posición central dentro del salón 2010
-                MAP_CAFETERIA -> Pair(2, 2)  // Posición central dentro de la escomCAFE
+                // Mapas existentes
+                MAP_MAIN -> Pair(15, 15)
+                MAP_BUILDING2 -> Pair(20, 16)
+                MAP_SALON2009 -> Pair(20, 20)
+                MAP_SALON2010 -> Pair(20, 20)
+                MAP_CAFETERIA -> Pair(2, 2)
+
+                // Nuevos mapas
+                MAP_ESTACIONAMIENTO -> Pair(20, 30)
+                MAP_TRAS_PLAZA -> Pair(20, 20)
+                MAP_LINDAVISTA -> Pair(20, 20)
+                MAP_TURISMO -> Pair(20, 30)
+                MAP_FUENTE -> Pair(20, 20)
 
                 else -> Pair(MAP_WIDTH / 2, MAP_HEIGHT / 2)
             }

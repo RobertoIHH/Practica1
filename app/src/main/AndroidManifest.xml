@@ -65,6 +65,27 @@
             android:name=".presentation.components.Cafeteria"
             android:configChanges="orientation|screenSize|keyboardHidden"/>
 
+        <!-- Nuevas actividades para los 5 mapas -->
+        <activity
+            android:name=".presentation.components.EstacionamientoEscom"
+            android:configChanges="orientation|screenSize|keyboardHidden"/>
+
+        <activity
+            android:name=".presentation.components.TramoAtrasPlaza"
+            android:configChanges="orientation|screenSize|keyboardHidden"/>
+
+        <activity
+            android:name=".presentation.components.TramoLindavista"
+            android:configChanges="orientation|screenSize|keyboardHidden"/>
+
+        <activity
+            android:name=".presentation.components.TramoTurismo"
+            android:configChanges="orientation|screenSize|keyboardHidden"/>
+
+        <activity
+            android:name=".presentation.components.TramoFuente"
+            android:configChanges="orientation|screenSize|keyboardHidden"/>
+
         <!-- DeviceList Activity -->
         <activity
             android:name=".presentation.components.DeviceListActivity"
