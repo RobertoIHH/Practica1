@@ -49,7 +49,7 @@ class TramoTurismo : AppCompatActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_turismo)
+        setContentView(R.layout.activity_tramoturismo)
 
         try {
             // Inicializar el mapView

@@ -254,6 +254,7 @@ class GameplayActivity : AppCompatActivity(),
                     when (targetDestination) {
                         "edificio2" -> startBuildingActivity()
                         "cafeteria" -> startCafeteriaActivity()
+                        "Estacionamiento" -> startEstacionamietoEscomActivity()
                         else -> showToast("No hay interacción disponible en esta posición")
                     }
                 } else {
@@ -287,6 +288,17 @@ class GameplayActivity : AppCompatActivity(),
         startActivity(intent)
         finish()
     }
+    private fun startEstacionamietoEscomActivity() {
+        val intent = Intent(this, EstacionamientoEscom::class.java).apply {
+            putExtra("PLAYER_NAME", playerName)
+            putExtra("IS_SERVER", gameState.isServer)
+            putExtra("INITIAL_POSITION", Pair(4, 25))
+            putExtra("PREVIOUS_POSITION", gameState.playerPosition) // Guarda la posición actual
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+        startActivity(intent)
+        finish()
+    }
 
     private var canChangeMap = false  // Variable para controlar si se puede cambiar de mapa
     private var targetDestination: String? = null  // Variable para almacenar el destino
@@ -304,6 +316,13 @@ class GameplayActivity : AppCompatActivity(),
             position.first == 33 && position.second == 34 -> {
                 canChangeMap = true
                 targetDestination = "cafeteria"
+                runOnUiThread {
+                    Toast.makeText(this, "Presiona A para entrar a la cafetería", Toast.LENGTH_SHORT).show()
+                }
+            }
+            position.first == 25 && position.second == 5 -> {
+                canChangeMap = true
+                targetDestination = "Estacionamiento"
                 runOnUiThread {
                     Toast.makeText(this, "Presiona A para entrar a la cafetería", Toast.LENGTH_SHORT).show()
                 }

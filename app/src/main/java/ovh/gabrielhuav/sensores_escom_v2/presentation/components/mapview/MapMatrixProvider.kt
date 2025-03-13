@@ -144,6 +144,7 @@ class MapMatrixProvider {
                     else if ((i % 5 == 0 || j % 5 == 0) && i > 5 && j > 5) {
                         matrix[i][j] = PATH
                     }
+
                 }
             }
 

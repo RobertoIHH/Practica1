@@ -50,7 +50,7 @@ class TramoLindavista : AppCompatActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_lindavista)
+        setContentView(R.layout.activity_tramolindavista)
 
         try {
             // Inicializar el mapView

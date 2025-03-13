@@ -53,7 +53,7 @@ class TramoFuente : AppCompatActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_fuente)
+        setContentView(R.layout.activity_tramofuente)
 
         try {
             // Inicializar el mapView

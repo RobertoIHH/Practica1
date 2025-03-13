@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONObject
 import ovh.gabrielhuav.sensores_escom_v2.R
@@ -39,6 +40,8 @@ class EstacionamientoEscom : AppCompatActivity(),
     private lateinit var btnBackToHome: Button
     private lateinit var tvBluetoothStatus: TextView
     private lateinit var buttonA: Button
+    private lateinit var btnB1: Button    // Botón auxiliar 1
+    private lateinit var btnB2: Button    // Botón auxiliar 2 (BCK)
 
     private lateinit var playerName: String
     private lateinit var bluetoothBridge: BluetoothWebSocketBridge
@@ -48,7 +51,7 @@ class EstacionamientoEscom : AppCompatActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_estacionamiento)
+        setContentView(R.layout.activity_estacionamientoescom)
 
         try {
             // Inicializar el mapView
@@ -157,6 +160,8 @@ class EstacionamientoEscom : AppCompatActivity(),
         btnBackToHome = findViewById(R.id.button_back_to_home)
         tvBluetoothStatus = findViewById(R.id.tvBluetoothStatus)
         buttonA = findViewById(R.id.button_a)
+        btnB1 = findViewById(R.id.button_small_1)
+        btnB2 = findViewById(R.id.button_small_2)
 
         // Cambiar el título para indicar dónde estamos
         tvBluetoothStatus.text = "Estacionamiento ESCOM - Conectando..."

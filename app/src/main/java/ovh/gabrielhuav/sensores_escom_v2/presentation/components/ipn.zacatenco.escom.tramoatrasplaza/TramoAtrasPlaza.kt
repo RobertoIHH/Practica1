@@ -49,7 +49,7 @@ class TramoAtrasPlaza : AppCompatActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_tras_plaza)
+        setContentView(R.layout.activity_tramoatrasplaza)
 
         try {
             // Inicializar el mapView
